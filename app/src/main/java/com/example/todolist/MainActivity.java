@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> itemList = new ArrayList<>();
     com.example.todolist.ItemAdapter adapter;
 
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint({"MissingInflatedId", "NotifyDataSetChanged"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,14 +38,14 @@ public class MainActivity extends AppCompatActivity {
             itemList.add(itemName);
             item.setText("");
             FileHelper.writeData(itemList, getApplicationContext());
-            adapter.notifyItemInserted(itemList.size() - 1);
+            adapter.notifyDataSetChanged();
 
         });
         adapter.setOnItemDeleteListener(position -> {
             FragmentDialog dialog = new FragmentDialog();
             dialog.setListener(() -> {
                 itemList.remove(position);
-                adapter.notifyItemRemoved(position);
+                adapter.notifyDataSetChanged();
                 FileHelper.writeData(itemList, getApplicationContext());
             });
             dialog.show(getSupportFragmentManager(), "Delete fragment");
