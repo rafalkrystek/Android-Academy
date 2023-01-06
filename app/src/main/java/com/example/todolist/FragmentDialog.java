@@ -11,11 +11,11 @@ import androidx.fragment.app.DialogFragment;
 
 public class FragmentDialog extends DialogFragment {
 
-    public interface OnItemDeleteListener {
-        void onItemDeleted();
+    public interface DialogListener {
+        void onPositiveButtonClicked();
     }
 
-    private OnItemDeleteListener listener;
+    private DialogListener listener;
 
     @NonNull
     @Override
@@ -29,7 +29,7 @@ public class FragmentDialog extends DialogFragment {
         builder.setNegativeButton("No", (dialog, which) -> dialog.cancel());
         builder.setPositiveButton("Yes", (dialogInterface, i) -> {
             if (listener != null) {
-                listener.onItemDeleted();
+                listener.onPositiveButtonClicked();
             }
             dialogInterface.cancel();
         });
@@ -37,13 +37,13 @@ public class FragmentDialog extends DialogFragment {
         return builder.create();
     }
 
-    public void setListener(@NonNull OnItemDeleteListener listener) {
+    public void setListener(@NonNull DialogListener listener) {
 
         this.listener = listener;
 
     }
 
-};
+}
 
 
 

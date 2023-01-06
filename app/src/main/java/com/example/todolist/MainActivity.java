@@ -2,12 +2,12 @@ package com.example.todolist;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
@@ -15,9 +15,9 @@ public class MainActivity extends AppCompatActivity {
 
     EditText item;
     Button add;
-    ListView listView;
+    RecyclerView recyclerView;
     ArrayList<String> itemList = new ArrayList<>();
-    ArrayAdapter<String> arrayAdapter;
+    com.example.todolist.ItemAdapter adapter;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -27,29 +27,31 @@ public class MainActivity extends AppCompatActivity {
 
         item = findViewById(R.id.editText);
         add = findViewById(R.id.add_button);
-        listView = findViewById(R.id.list1);
+        recyclerView = findViewById(R.id.list1);
         itemList = FileHelper.readData(this);
-        arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1, itemList);
-        listView.setAdapter(arrayAdapter);
-
+        adapter = new ItemAdapter(this, itemList);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         add.setOnClickListener(view -> {
 
             String itemName = item.getText().toString();
             itemList.add(itemName);
             item.setText("");
             FileHelper.writeData(itemList, getApplicationContext());
-            arrayAdapter.notifyDataSetChanged();
+            adapter.notifyItemInserted(itemList.size() - 1);
 
         });
-        listView.setOnItemClickListener((adapterView, view, i, l) -> {
+        adapter.setOnItemDeleteListener(position -> {
             FragmentDialog dialog = new FragmentDialog();
             dialog.setListener(() -> {
-                itemList.remove(i);
-                arrayAdapter.notifyDataSetChanged();
+                itemList.remove(position);
+                adapter.notifyItemRemoved(position);
+                FileHelper.writeData(itemList, getApplicationContext());
             });
             dialog.show(getSupportFragmentManager(), "Delete fragment");
         });
     }
 }
+
 
 
